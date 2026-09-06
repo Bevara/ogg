@@ -142,14 +142,29 @@ static void oggdmx_get_stream_info(ogg_packet *oggpacket, OGGInfo *info)
 	}
 	/*speex*/
 	else if ((oggpacket->bytes >= 7) && !strncmp((char *) &oggpacket->packet[0], "Speex", 5)) {
+		u32 extra_headers;
 		info->streamType = GF_STREAM_AUDIO;
 		oggpack_readinit(&opb, oggpacket->packet, oggpacket->bytes);
-		oggpack_adv(&opb, 224);
-		oggpack_adv(&opb, 32);
-		oggpack_adv( &opb, 32);
+		oggpack_adv(&opb, 224);	/*speex_string[8] + speex_version[20]*/
+		oggpack_adv(&opb, 32);	/*speex_version_id*/
+		oggpack_adv( &opb, 32);	/*header_size*/
 		info->sample_rate = oggpack_read(&opb, 32);
+		oggpack_adv(&opb, 32);	/*mode*/
+		oggpack_adv(&opb, 32);	/*mode_bitstream_version*/
+		info->nb_chan = oggpack_read(&opb, 32);
+		oggpack_adv(&opb, 32);	/*bitrate*/
+		oggpack_adv(&opb, 32);	/*frame_size*/
+		oggpack_adv(&opb, 32);	/*vbr*/
+		oggpack_adv(&opb, 32);	/*frames_per_packet*/
+		extra_headers = oggpack_read(&opb, 32);
 		info->type = GF_CODECID_SPEEX;
-		info->num_init_headers = 1;
+		/*A Speex stream opens with the header packet *and* a Vorbis comment
+		packet, plus any extra_headers the header announces - exactly what
+		speexdec skips before it starts decoding audio. Counting only the first
+		one here hands the comment packet to the decoder as if it were audio,
+		which does not merely produce one bad frame: Speex is predictive, so the
+		poisoned state makes every frame after it differ too.*/
+		info->num_init_headers = 2 + extra_headers;
 	}
 	/*flac*/
 	else if ((oggpacket->bytes >= 4) && !strncmp((char *) &oggpacket->packet[0], "fLaC", 4)) {
@@ -810,6 +825,13 @@ GF_Err oggdmx_process(GF_Filter *filter)
 					}
 					break;
 				case GF_CODECID_THEORA:
+					add_page = GF_TRUE;
+					break;
+				/*Speex has a single init header, carried through as-is: the
+				decoder parses it itself with speex_packet_to_header(). Without
+				this case add_page stays false, the pid is declared with no
+				decoder config, and speexdec has nothing to configure from.*/
+				case GF_CODECID_SPEEX:
 					add_page = GF_TRUE;
 					break;
 				}
