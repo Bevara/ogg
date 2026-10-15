@@ -1,5 +1,5 @@
 {
-    "name": "oggdmx",
+    "name": "ogg",
     "description": "OGG demultiplexer",
     "filters":["oggdmx"],
     "help": "This filter demultiplexes OGG files/data into a set of media PIDs and frames.",
