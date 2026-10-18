@@ -1,6 +1,6 @@
 {
     "name": "ogg",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "OGG demultiplexer",
     "filters":["oggdmx"],
     "help": "This filter demultiplexes OGG files/data into a set of media PIDs and frames.",
@@ -16,7 +16,7 @@
     "extension":{
       "ogg" : "audio"
     },
-    "using": ["solver_minimal_1"],
+    "using": ["solver_minimal_1", "solver_1"],
     "patents": {
         "status": "royalty-free",
         "note": "Ogg, Vorbis",
