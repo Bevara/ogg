@@ -2,21 +2,32 @@
     "name": "ogg",
     "version": "1.0.3",
     "description": "OGG demultiplexer",
-    "filters":["oggdmx"],
+    "filters": [
+        "oggdmx"
+    ],
     "help": "This filter demultiplexes OGG files/data into a set of media PIDs and frames.",
     "support": [
         "audio",
         "video"
     ],
-    "sources":"https://bevara.ddns.net/sources/ogg.accessor",
-    "filter_source":{
-        "oggdmx" : "dmx_ogg.c"
+    "sources": "https://bevara.ddns.net/sources/ogg.accessor",
+    "filter_source": {
+        "oggdmx": "dmx_ogg.c"
     },
-    "Format": ["Ogg"],
-    "extension":{
-      "ogg" : "audio"
+    "Format": [
+        "Ogg"
+    ],
+    "extension": {
+        "ogg": "audio"
     },
-    "using": ["mm_solver_minimal_1.0.1", "mm_solver_1.0.1", "mm_solver_1.0.2", "mm_solver_1.0.3", "mm_solver_1.0.4"],
+    "using": [
+        "mm_solver_minimal_1.0.1",
+        "mm_solver_1.0.1",
+        "mm_solver_1.0.2",
+        "mm_solver_1.0.3",
+        "mm_solver_1.0.4",
+        "mm_solver_1.0.5"
+    ],
     "patents": {
         "status": "royalty-free",
         "note": "Ogg, Vorbis",
